@@ -22,6 +22,7 @@
 - Existing queued plans, saved notes and prior rest results remain intact. Existing option IDs are preserved; their resulting quality may change under new scores.
 - A GM must connect to provision the rule document after upgrading; old world settings remain as a compatibility fallback. The preparation times are campaign house rules, not official D&D 2024 rules.
 
+- First publication as a Runyth module: `runyth-sleep` / **Runyth Sleep** with the publication standard in place — deterministic `-mod`, `-src`, and `-doc` archives with per-version checksums, byte-identical rebuild verification, standard quality and release pipelines, the full GNU AGPL-3.0-or-later licence with the standard source notice, the standard README licence chapter, and the manifest URL surfaces.
 
 ## 1.0.7 — 2026-10-23
 
