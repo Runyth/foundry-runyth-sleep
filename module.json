@@ -1,0 +1,46 @@
+{
+  "id": "runyth-sleep",
+  "title": "Runyth Sleep",
+  "description": "Grounded sleeping conditions, quality-of-rest consequences, configurable exhaustion and comfort benefits for D&D 5e long rests.",
+  "version": "1.1.0",
+  "authors": [
+    {
+      "name": "Runyth"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.0"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/module.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "languages/de.json"
+    }
+  ],
+  "license": "LICENSE",
+  "readme": "README.md"
+}

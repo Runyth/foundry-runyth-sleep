@@ -1,0 +1,16 @@
+{
+  "name": "runyth-sleep",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Foundry VTT v13 sleeping condition automation",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:layout": "node tools/layout-smoke.mjs",
+    "check": "node --check scripts/main.js && node --check scripts/domain.js && node --check scripts/mechanics.js && node --check scripts/armor.js && node --check scripts/armor-engine.js && node --check scripts/engine.js && node --check scripts/planner.js && node --check scripts/geometry.js && node --check scripts/dashboard.js && node --check scripts/launchers.js && node --check scripts/permissions.js && node --check scripts/rules-store.js && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

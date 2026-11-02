@@ -1,0 +1,123 @@
+<div class="rs-app-shell" data-sleep-dashboard>
+  <header class="rs-app-header">
+    <div>
+      <h1><i class="fa-solid fa-bed" aria-hidden="true"></i> {{localize "RUNYTH_SLEEP.Dashboard.Title"}}</h1>
+      <p>{{localize "RUNYTH_SLEEP.Dashboard.Subtitle"}}</p>
+    </div>
+    <div class="rs-header-status">
+      <span class="rs-context-badge"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{sceneName}}</span>
+      <span class="rs-version">v{{version}}</span>
+    </div>
+  </header>
+  <nav class="rs-tabs" aria-label="{{localize 'RUNYTH_SLEEP.Tabs.Navigation'}}">
+    {{#each tabs}}
+      <button type="button" data-action="switchTab" data-tab="{{id}}" class="{{#if active}}active{{/if}}" aria-current="{{#if active}}page{{else}}false{{/if}}">{{label}}</button>
+    {{/each}}
+  </nav>
+  <main class="rs-content">
+    {{#if overview}}
+      <section class="rs-overview-grid">
+        <article class="rs-panel">
+          <h2><i class="fa-solid fa-users" aria-hidden="true"></i> {{localize "RUNYTH_SLEEP.Dashboard.Summary"}}</h2>
+          <div class="rs-level-summary">
+            <div class="rs-level-card rs-level-neutral"><strong>{{total}}</strong><span>{{localize "RUNYTH_SLEEP.Dashboard.Characters"}}</span></div>
+            <div class="rs-level-card rs-level-good"><strong>{{planned}}</strong><span>{{localize "RUNYTH_SLEEP.Dashboard.Planned"}}</span></div>
+            <div class="rs-level-card rs-level-warning"><strong>{{unplanned}}</strong><span>{{localize "RUNYTH_SLEEP.Dashboard.Unplanned"}}</span></div>
+            <div class="rs-level-card rs-level-excellent"><strong>{{recent}}</strong><span>{{localize "RUNYTH_SLEEP.Dashboard.Recorded"}}</span></div>
+          </div>
+          <p class="hint">{{localize "RUNYTH_SLEEP.Dashboard.WorkflowDescription"}}</p>
+        </article>
+        <article class="rs-panel">
+          <div class="rs-section-heading"><div><h2><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{localize "RUNYTH_SLEEP.Dashboard.SceneContext"}}</h2><p>{{sceneName}}</p></div></div>
+          <p class="hint">{{localize "RUNYTH_SLEEP.Dashboard.SceneHint"}}</p>
+          <div class="rs-button-grid">{{#if gm}}<button type="button" data-action="plan"><i class="fa-solid fa-bed"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SetPlan"}}</span></button>{{/if}}{{#if canEditRules}}<button type="button" data-action="rules"><i class="fa-solid fa-sliders"></i><span>{{localize "RUNYTH_SLEEP.Planner.Rules"}}</span></button>{{/if}}</div>
+        </article>
+        <article class="rs-panel">
+          <h2><i class="fa-solid fa-list-check" aria-hidden="true"></i> {{localize "RUNYTH_SLEEP.Dashboard.QuickActions"}}</h2>
+          <p class="hint">{{localize "RUNYTH_SLEEP.Dashboard.OverviewHint"}}</p>
+          <div class="rs-button-grid"><button type="button" data-action="switchTab" data-tab="actors"><i class="fa-solid fa-users-rectangle"></i><span>{{localize "RUNYTH_SLEEP.Tabs.actors"}}</span></button><button type="button" data-action="help"><i class="fa-solid fa-circle-question"></i><span>{{localize "RUNYTH_SLEEP.Planner.Help"}}</span></button></div>
+        </article>
+        <article class="rs-panel">
+          <h2><i class="fa-solid fa-moon" aria-hidden="true"></i> {{localize "RUNYTH_SLEEP.Dashboard.NextRest"}}</h2>
+          <ul class="rs-compact-list">
+            {{#each previewRows}}<li><button type="button" class="rs-link-button" data-action="plan" data-actor-uuid="{{uuid}}">{{name}}</button> — <span class="rs-quality rs-quality-{{stateClass}}">{{quality}}</span></li>
+            {{else}}<li class="hint">{{localize "RUNYTH_SLEEP.Dashboard.NoQueued"}}</li>{{/each}}
+          </ul>
+        </article>
+      </section>
+    {{/if}}
+
+    {{#if actorsTab}}
+      <section class="rs-toolbar" aria-label="{{localize 'RUNYTH_SLEEP.Dashboard.Filters'}}">
+        <label class="rs-search-field"><span>{{localize "RUNYTH_SLEEP.Dashboard.Search"}}</span><input type="search" value="{{search}}" data-sleep-filter="search" placeholder="{{localize 'RUNYTH_SLEEP.Dashboard.SearchPlaceholder'}}" autocomplete="off"></label>
+        <label><span>{{localize "RUNYTH_SLEEP.Dashboard.Folder"}}</span><select data-sleep-filter="folder">{{#each folderOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}</select></label>
+        <label><span>{{localize "RUNYTH_SLEEP.Dashboard.Status"}}</span><select data-sleep-filter="status">{{#each statusOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+        <label class="rs-checkbox"><input type="checkbox" data-sleep-filter="includeSubfolders" {{#if includeSubfolders}}checked{{/if}}><span>{{localize "RUNYTH_SLEEP.Dashboard.IncludeSubfolders"}}</span></label>
+        <button type="button" data-action="reset"><i class="fa-solid fa-filter-circle-xmark"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.Reset"}}</span></button>
+      </section>
+      <p class="rs-result-summary">{{visible}} / {{total}} {{localize "RUNYTH_SLEEP.Dashboard.Characters"}}</p>
+      <nav class="rs-actor-pagination" aria-label="{{localize 'RUNYTH_SLEEP.Dashboard.Pagination'}}">
+        <span>{{rangeStart}}–{{rangeEnd}} / {{visible}}</span>
+        <label><span>{{localize "RUNYTH_SLEEP.Dashboard.RowsPerPage"}}</span><select data-sleep-filter="pageSize">{{#each pageSizes}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>{{/each}}</select></label>
+        <div class="rs-pagination-buttons"><button type="button" class="compact" data-action="previous" {{#unless hasPrev}}disabled{{/unless}}><i class="fa-solid fa-chevron-left"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.Previous"}}</span></button><strong>{{page}} / {{pageCount}}</strong><button type="button" class="compact" data-action="next" {{#unless hasNext}}disabled{{/unless}}><span>{{localize "RUNYTH_SLEEP.Dashboard.Next"}}</span><i class="fa-solid fa-chevron-right"></i></button></div>
+      </nav>
+      {{#if showBulk}}
+        <section class="rs-selection-toolbar">
+          <div><strong>{{localize "RUNYTH_SLEEP.Dashboard.Selected"}}: <span data-sleep-selected-count>{{selectedCount}}</span></strong><small>{{localize "RUNYTH_SLEEP.Dashboard.SelectHint"}}</small></div>
+          <div class="rs-selection-actions">
+            <button type="button" data-action="selectVisible"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectVisible"}}</span></button>
+            <button type="button" data-action="clearSelection"><i class="fa-solid fa-xmark"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.Deselect"}}</span></button>
+            <button type="button" data-action="bulk" data-sleep-requires-selection {{#unless selectedCanModify}}disabled{{/unless}}><i class="fa-solid fa-bed"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.QueueSelected"}}</span></button>
+            <button type="button" class="danger" data-action="clear" data-sleep-requires-selection {{#unless selectedCanModify}}disabled{{/unless}}><i class="fa-solid fa-eraser"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.ClearSelected"}}</span></button>
+          </div>
+        </section>
+      {{/if}}
+      <section class="rs-actor-list" aria-live="polite">
+        {{#each actorGroups}}
+          <section class="rs-actor-group">
+            <header class="rs-actor-group-header"><div><i class="fa-solid fa-folder-open" aria-hidden="true"></i><strong>{{label}}</strong><span>{{rows.length}}</span></div>{{#if @root.showBulk}}<button type="button" class="compact" data-action="selectFolder" data-folder="{{id}}"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectFolder"}}</span></button>{{/if}}</header>
+            <div class="rs-actor-group-rows">
+            {{#each rows}}
+              <article class="rs-actor-row rs-level-{{stateClass}} {{#if selected}}selected{{/if}}">
+                <div class="rs-actor-select">{{#if canEdit}}<label class="rs-row-selector" title="{{name}}"><input type="checkbox" data-sleep-select="{{uuid}}" {{#if selected}}checked{{/if}}><span class="sr-only">{{name}}</span></label>{{/if}}</div>
+                <button type="button" class="rs-actor-identity" data-action="sheet" data-actor-uuid="{{uuid}}"><img src="{{image}}" alt="" loading="lazy" decoding="async"><span><strong>{{name}}</strong><small>{{folderName}}</small></span></button>
+                <div class="rs-state-columns"><span title="{{localize 'RUNYTH_SLEEP.Dashboard.Pending'}}"><i class="fa-solid fa-moon" aria-hidden="true"></i> <span class="rs-quality rs-quality-{{stateClass}}">{{quality}}</span></span><span title="{{localize 'RUNYTH_SLEEP.Dashboard.LastRest'}}"><i class="fa-solid fa-clock" aria-hidden="true"></i> {{last}}</span><span>{{#if hasPlan}}{{localize "RUNYTH_SLEEP.Planner.Score"}}: {{score}}{{else}}{{localize "RUNYTH_SLEEP.Dashboard.NoQueued"}}{{/if}}</span><span>{{lastAt}}</span></div>
+                <div class="rs-row-actions"><button type="button" data-action="plan" data-actor-uuid="{{uuid}}"><i class="fa-solid fa-bed"></i><span>{{#if canEdit}}{{localize "RUNYTH_SLEEP.Dashboard.SetPlan"}}{{else}}{{localize "RUNYTH_SLEEP.Dashboard.ViewPlan"}}{{/if}}</span></button>{{#if canEdit}}{{#if hasPlan}}<button type="button" class="danger compact" data-action="clear" data-actor-uuid="{{uuid}}" title="{{localize 'RUNYTH_SLEEP.Planner.Clear'}}"><i class="fa-solid fa-eraser"></i></button>{{/if}}{{/if}}<button type="button" class="compact" data-action="sheet" data-actor-uuid="{{uuid}}" title="{{localize 'RUNYTH_SLEEP.Dashboard.OpenSheet'}}"><i class="fa-solid fa-pen-to-square"></i></button></div>
+              </article>
+            {{/each}}
+            </div>
+          </section>
+        {{else}}
+          <div class="rs-empty"><i class="fa-solid fa-magnifying-glass"></i><p>{{localize "RUNYTH_SLEEP.Dashboard.Empty"}}</p></div>
+        {{/each}}
+      </section>
+    {{/if}}
+
+    {{#if rulesTab}}
+      <section class="rs-overview-grid">
+        <article class="rs-panel"><h2><i class="fa-solid fa-scale-balanced"></i> {{localize "RUNYTH_SLEEP.Tabs.rules"}}</h2><p>{{localize "RUNYTH_SLEEP.Rules.Intro"}}</p><p class="hint">{{localize "RUNYTH_SLEEP.Dashboard.RulesHint"}}</p>{{#if canEditRules}}<button type="button" data-action="rules"><i class="fa-solid fa-sliders"></i><span>{{localize "RUNYTH_SLEEP.Planner.Rules"}}</span></button>{{/if}}</article>
+        <article class="rs-panel"><h2><i class="fa-solid fa-shield-halved"></i> {{localize "RUNYTH_SLEEP.Armor.Title"}}</h2><p>{{localize "RUNYTH_SLEEP.Armor.Intro"}}</p>{{#if canEditRules}}<button type="button" data-action="rules"><i class="fa-solid fa-sliders"></i><span>{{localize "RUNYTH_SLEEP.Planner.Rules"}}</span></button>{{/if}}</article>
+        <article class="rs-panel"><h2>{{localize "RUNYTH_SLEEP.Dashboard.Workflow"}}</h2><p>{{localize "RUNYTH_SLEEP.Dashboard.WorkflowDescription"}}</p><button type="button" data-action="help"><i class="fa-solid fa-circle-question"></i><span>{{localize "RUNYTH_SLEEP.Planner.Help"}}</span></button></article>
+      </section>
+    {{/if}}
+
+    {{#if permissionsTab}}
+      <section class="rs-panel rs-permissions-panel">
+        <h2><i class="fa-solid fa-shield-halved"></i> {{localize "RUNYTH_SLEEP.Permissions.Title"}}</h2><p class="hint">{{localize "RUNYTH_SLEEP.Permissions.Hint"}}</p>
+        <div class="rs-table-wrap"><table><thead><tr><th>{{localize "RUNYTH_SLEEP.Permissions.Capability"}}</th><th>{{localize "RUNYTH_SLEEP.Permissions.MinRole"}}</th></tr></thead><tbody>
+          {{#each permissionRows}}<tr><td>{{label}}</td><td><select data-sleep-permission="{{id}}" aria-label="{{label}}">{{#each roles}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></td></tr>{{/each}}
+        </tbody></table></div>
+        <p class="hint">{{localize "RUNYTH_SLEEP.Permissions.OwnershipHint"}}</p>
+        {{#if userOptions}}<h3>{{localize "RUNYTH_SLEEP.Permissions.UserOverrides"}}</h3><p class="hint">{{localize "RUNYTH_SLEEP.Permissions.UserHint"}}</p>
+        <div class="rs-user-overrides">{{#each userOptions}}<details class="rs-panel rs-user-card"><summary>{{name}}</summary><div class="rs-table-wrap"><table><thead><tr><th>{{localize "RUNYTH_SLEEP.Permissions.Capability"}}</th><th>{{localize "RUNYTH_SLEEP.Permissions.Override"}}</th></tr></thead><tbody>{{#each permissions}}<tr><td>{{label}}</td><td><select data-sleep-user-id="{{../id}}" data-sleep-override="{{id}}" aria-label="{{label}}"><option value="inherit" {{#if inherit}}selected{{/if}}>{{localize "RUNYTH_SLEEP.Permissions.Inherit"}}</option><option value="allow" {{#if allow}}selected{{/if}}>{{localize "RUNYTH_SLEEP.Permissions.Allow"}}</option><option value="deny" {{#if deny}}selected{{/if}}>{{localize "RUNYTH_SLEEP.Permissions.Deny"}}</option></select></td></tr>{{/each}}</tbody></table></div></details>{{/each}}</div>{{/if}}
+        <div class="rs-form-actions"><button type="button" data-action="savePermissions"><i class="fa-solid fa-floppy-disk"></i><span>{{localize "RUNYTH_SLEEP.Permissions.Save"}}</span></button><button type="button" data-action="resetPermissions"><i class="fa-solid fa-rotate-left"></i><span>{{localize "RUNYTH_SLEEP.Permissions.Reset"}}</span></button></div>
+      </section>
+    {{/if}}
+
+    {{#if settingsTab}}
+      <section class="rs-overview-grid"><article class="rs-panel"><h2><i class="fa-solid fa-gear"></i> {{localize "RUNYTH_SLEEP.Tabs.settings"}}</h2><p>{{localize "RUNYTH_SLEEP.Dashboard.SettingsHint"}}</p><button type="button" data-action="settings"><i class="fa-solid fa-sliders"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.ModuleSettings"}}</span></button></article>
+        <article class="rs-panel"><h2>{{localize "RUNYTH_SLEEP.Dashboard.Automation"}}</h2><p>{{localize "RUNYTH_SLEEP.Settings.AutoApplyName"}}: {{#if autoApply}}{{localize "RUNYTH_SLEEP.Dashboard.Enabled"}}{{else}}{{localize "RUNYTH_SLEEP.Dashboard.Disabled"}}{{/if}}</p><p class="hint">{{localize "RUNYTH_SLEEP.Settings.UnplannedHint"}}</p></article>
+      </section>
+    {{/if}}
+  </main>
+</div>
