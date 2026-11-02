@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 // Optional armor-at-rest integration. The 2024 core rules do not penalize armored sleep.
 // Xanathar's medium/heavy-armor rule is an older official optional rule, not 2024 RAW.
 export const ARMOR_CATEGORIES = Object.freeze(["none", "light", "medium", "heavy"]);

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import { openDashboard } from "./dashboard.js";
 import { openPlanner } from "./planner.js";
 import { canViewActor, canPlanActor } from "./permissions.js";

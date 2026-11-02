@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 // Window geometry is stored per-client, only when a dialog closes. No drag-time writes.
 import { MODULE_ID } from "./domain.js";
 

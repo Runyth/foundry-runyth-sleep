@@ -12,5 +12,5 @@
   "engines": {
     "node": ">=20"
   },
-  "license": "MIT"
+  "license": "AGPL-3.0-or-later"
 }
