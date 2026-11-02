@@ -42,5 +42,9 @@
     }
   ],
   "license": "LICENSE",
-  "readme": "README.md"
+  "readme": "README.md",
+  "url": "https://github.com/Runyth/foundry-runyth-sleep",
+  "manifest": "https://github.com/Runyth/foundry-runyth-sleep/releases/latest/download/module.json",
+  "download": "https://github.com/Runyth/foundry-runyth-sleep/releases/download/v1.1.0/runyth-sleep-v1.1.0-mod.zip",
+  "changelog": "CHANGELOG.md"
 }
