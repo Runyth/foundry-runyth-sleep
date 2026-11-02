@@ -3,13 +3,13 @@
 **Version:** 1.1.0
 **Platform:** Foundry VTT v13 · D&D 5e system 5.x–6.x (v13-dependent)  
 **Languages:** English and German · English source/default  
-**License:** MIT
+**License:** GNU AGPL-3.0-or-later
 
 Runyth Sleep adds grounded, GM-approved **sleeping conditions** to a character's **next completed long rest**. The system handles its ordinary long-rest recovery first; Runyth Sleep then awards or penalizes the quality of the sleep. All consequences are house rules, not official D&D rules.
 
 ## Install
 
-1. Extract `runyth-sleep-v1.1.0.zip` into `<Foundry User Data>/Data/modules/`. This must create the directory `modules/runyth-sleep/` containing `module.json`.
+1. Extract `runyth-sleep-v1.1.0-mod.zip` into `<Foundry User Data>/Data/modules/`. This must create the directory `modules/runyth-sleep/` containing `module.json`.
 2. Restart Foundry if necessary. Enable **Runyth Sleep** under **Manage Modules** in a D&D 5e world.
 3. Open **Configure Settings → Module Settings → Runyth Sleep → Open dashboard**. A dedicated entry is also available in the Settings and Actors sidebars and through the bed icon in the Token Controls toolbar.
 4. Locate a character in the dashboard, e.g. **Mike Milligan**, then click **Set sleep**. You can search or filter by Actor folder and queued/unplanned status.

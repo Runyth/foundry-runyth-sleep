@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 /**
  * A dedicated owned JournalEntry is the authoritative rule store. Unlike a world
  * setting, its OWNER permission can be delegated without granting Configure Settings.

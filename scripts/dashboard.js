@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import { MODULE_ID, TIERS, evaluate } from "./domain.js";
 import { getPlan, getLastResult, clearPlans } from "./engine.js";
 import { readRules, canModifyRules, syncRuleDocumentAccess } from "./rules-store.js";

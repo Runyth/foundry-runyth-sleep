@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import {
   DEFAULT_CHOICES, DEFAULT_OUTCOMES, DEFAULT_THRESHOLDS, FACTORS, TIERS,
   evaluate, sanitizeChoices, sanitizeOutcomes, sanitizeThresholds

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import { readRules } from "./rules-store.js";
 import { MODULE_ID } from "./domain.js";
 import {

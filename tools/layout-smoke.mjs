@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 /** Browser-based layout smoke test against the module's actual DialogV2 markup and CSS.
  *  Requires local Chromium; uses no network or third-party JavaScript dependencies.
  *  The Foundry shell is a structural mock, not a substitute for in-world testing.

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { canAccess, canPlanActor, canSeeLastResult, canViewActor, DEFAULT_PERMISSIONS,

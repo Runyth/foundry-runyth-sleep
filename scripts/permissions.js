@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import { MODULE_ID } from "./domain.js";
 
 // Deliberately only expose permissions that can be enforced without an unsafe GM socket proxy.
