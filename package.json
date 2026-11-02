@@ -5,12 +5,13 @@
   "type": "module",
   "description": "Foundry VTT v13 sleeping condition automation",
   "scripts": {
-    "test": "node --test tests/*.test.js",
-    "test:layout": "node tools/layout-smoke.mjs",
-    "check": "node --check scripts/main.js && node --check scripts/domain.js && node --check scripts/mechanics.js && node --check scripts/armor.js && node --check scripts/armor-engine.js && node --check scripts/engine.js && node --check scripts/planner.js && node --check scripts/geometry.js && node --check scripts/dashboard.js && node --check scripts/launchers.js && node --check scripts/permissions.js && node --check scripts/rules-store.js && npm test"
+    "test": "node --test tests/*.test.js tests/*.test.mjs",
+    "check": "node tools/check.mjs && npm test && npm run build && npm run verify:release",
+    "build": "node tools/build.mjs",
+    "verify:release": "node tools/verify-release.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13.0 <27"
   },
   "license": "AGPL-3.0-or-later"
 }
