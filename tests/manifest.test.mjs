@@ -20,6 +20,7 @@ test("manifest identity", () => {
   assert.equal(manifest.title, "Runyth Sleep");
   assert.equal(manifest.authors.length, 1);
   assert.equal(manifest.authors[0].name, "Runyth");
+  assert.equal(manifest.authors[0].url, "https://github.com/Runyth");
 });
 
 test("manifest URL surfaces", () => {

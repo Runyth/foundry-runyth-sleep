@@ -52,7 +52,7 @@ test("module v13 registration, scene tool and public API initialize safely", asy
   assert.ok(plugin.api);
   assert.equal(typeof plugin.api.openDashboard, "function");
   assert.ok(Object.isFrozen(plugin.api));
-  assert.equal(plugin.api.version, "1.1.0");
+  assert.equal(plugin.api.version, "1.1.1");
   assert.equal(plugin.api.evaluate({ bedding: "bed", shelter: "indoor" }).tier, "comfortable");
   for (const hook of ["dnd5e.preLongRest", "dnd5e.preShortRest", "dnd5e.restCompleted"]) {
     assert.equal(typeof callbacks.get(hook), "function");
@@ -87,7 +87,7 @@ test("English and German localization cover all factors, choices and identical k
 test("install manifest targets Foundry 13 and references only packaged assets", async () => {
   const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
   assert.equal(manifest.id, MODULE_ID);
-  assert.equal(manifest.version, "1.1.0");
+  assert.equal(manifest.version, "1.1.1");
   assert.equal(manifest.compatibility.minimum, "13");
   assert.equal(manifest.compatibility.verified, "13");
   assert.deepEqual(manifest.relationships.systems.map(system => system.id), ["dnd5e"]);

@@ -130,6 +130,10 @@ Node.js 20+ is required for tests. Tests use Foundry mocks and do not run a Foun
 No hosted Git URL or update manifest is published in this initial release; install from the ZIP manually.
 
 
+## Content licence
+
+The sleeping-condition house rules this module adds (shelter grades, quality scoring thresholds, comfort results and the armor presets table) are homebrew gameplay content licensed **CC BY-SA 4.0**. The program source is **AGPL-3.0-or-later**; see the standard licence chapter below.
+
 ## Licence
 
 Copyright © 2026  [Daniel Braniewski](https://brani.dev/)
