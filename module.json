@@ -2,10 +2,11 @@
   "id": "runyth-sleep",
   "title": "Runyth Sleep",
   "description": "Grounded sleeping conditions, quality-of-rest consequences, configurable exhaustion and comfort benefits for D&D 5e long rests.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "authors": [
     {
-      "name": "Runyth"
+      "name": "Runyth",
+      "url": "https://github.com/Runyth"
     }
   ],
   "compatibility": {
@@ -45,6 +46,6 @@
   "readme": "README.md",
   "url": "https://github.com/Runyth/foundry-runyth-sleep",
   "manifest": "https://github.com/Runyth/foundry-runyth-sleep/releases/latest/download/module.json",
-  "download": "https://github.com/Runyth/foundry-runyth-sleep/releases/download/v1.1.0/runyth-sleep-v1.1.0-mod.zip",
+  "download": "https://github.com/Runyth/foundry-runyth-sleep/releases/download/v1.1.1/runyth-sleep-v1.1.1-mod.zip",
   "changelog": "CHANGELOG.md"
 }
