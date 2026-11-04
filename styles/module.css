@@ -173,6 +173,53 @@
 
 
 /* All selectors are module-scoped; the presentation palette and geometry are native to this module. */
+/* DialogV2 windows (rest planner, rules editor, help) share the dashboard's
+   themes palette: hoist the tokens to the dialog window root so every nested
+   .rs-* rule keeps its colors on these windows too. */
+.runyth-sleep-window {
+  --rs-bg: #17191d;
+  --rs-panel: #23262c;
+  --rs-panel-2: #2b2f36;
+  --rs-border: #555d69;
+  --rs-text: #f2f3f5;
+  --rs-muted: #c4c9d0;
+  --rs-accent: #d7ad61;
+  --rs-accent-strong: #f0ca82;
+  --rs-danger: #e07373;
+  --rs-success: #79c58a;
+  --rs-focus: #8ec5ff;
+  color: var(--rs-text);
+}
+
+.runyth-sleep-window .window-header {
+  background: linear-gradient(160deg, #101216, #191c21 70%, #12141a);
+  color: var(--rs-text);
+}
+
+.runyth-sleep-window .window-content {
+  background: linear-gradient(160deg, #16181c, #20242a 65%, #17191d);
+  color: var(--rs-text);
+}
+
+.runyth-sleep-window button[type="submit"],
+.runyth-sleep-window button:not(.compact) {
+  background: linear-gradient(180deg, #3a3d45, #2a2c33);
+  border: 1px solid var(--rs-border);
+  color: var(--rs-text);
+  border-radius: 6px;
+}
+
+.runyth-sleep-window button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #43464f, #303339);
+  border-color: var(--rs-accent);
+}
+
+.runyth-sleep-window button:disabled {
+  opacity: .55;
+}
+
+.runyth-sleep { color: var(--rs-text); }
+
 .runyth-sleep-dashboard {
   --rs-bg: #17191d;
   --rs-panel: #23262c;

@@ -223,7 +223,9 @@
       "ModuleSettings": "Moduleinstellungen öffnen",
       "Automation": "Schlaf-Automatik",
       "Enabled": "Aktiv",
-      "Disabled": "Deaktiviert"
+      "Disabled": "Deaktiviert",
+      "SelectNone": "Keine Charaktere zum Planen auf dieser Seite.",
+      "SelectedCounted": "{count} Charaktere ausgewählt."
     },
     "Tabs": {
       "Navigation": "Dashboard-Navigation",
