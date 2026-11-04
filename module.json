@@ -1,51 +1,51 @@
 {
-  "id": "runyth-sleep",
-  "title": "Runyth Sleep",
-  "description": "Grounded sleeping conditions, quality-of-rest consequences, configurable exhaustion and comfort benefits for D&D 5e long rests.",
-  "version": "1.1.1",
-  "authors": [
-    {
-      "name": "Runyth",
-      "url": "https://github.com/Runyth"
+ "id": "runyth-sleep",
+ "title": "Runyth Sleep",
+ "description": "Grounded sleeping conditions, quality-of-rest consequences, configurable exhaustion and comfort benefits for D&D 5e long rests.",
+ "version": "1.1.2",
+ "authors": [
+  {
+   "name": "Runyth",
+   "url": "https://github.com/Runyth"
+  }
+ ],
+ "compatibility": {
+  "minimum": "13",
+  "verified": "13"
+ },
+ "relationships": {
+  "systems": [
+   {
+    "id": "dnd5e",
+    "type": "system",
+    "compatibility": {
+     "minimum": "5.0.0"
     }
-  ],
-  "compatibility": {
-    "minimum": "13",
-    "verified": "13"
+   }
+  ]
+ },
+ "esmodules": [
+  "scripts/main.js"
+ ],
+ "styles": [
+  "styles/module.css"
+ ],
+ "languages": [
+  {
+   "lang": "en",
+   "name": "English",
+   "path": "languages/en.json"
   },
-  "relationships": {
-    "systems": [
-      {
-        "id": "dnd5e",
-        "type": "system",
-        "compatibility": {
-          "minimum": "5.0.0"
-        }
-      }
-    ]
-  },
-  "esmodules": [
-    "scripts/main.js"
-  ],
-  "styles": [
-    "styles/module.css"
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch",
-      "path": "languages/de.json"
-    }
-  ],
-  "license": "LICENSE",
-  "readme": "README.md",
-  "url": "https://github.com/Runyth/foundry-runyth-sleep",
-  "manifest": "https://github.com/Runyth/foundry-runyth-sleep/releases/latest/download/module.json",
-  "download": "https://github.com/Runyth/foundry-runyth-sleep/releases/download/v1.1.1/runyth-sleep-v1.1.1-mod.zip",
-  "changelog": "CHANGELOG.md"
+  {
+   "lang": "de",
+   "name": "Deutsch",
+   "path": "languages/de.json"
+  }
+ ],
+ "license": "LICENSE",
+ "readme": "README.md",
+ "url": "https://github.com/Runyth/foundry-runyth-sleep",
+ "manifest": "https://github.com/Runyth/foundry-runyth-sleep/releases/latest/download/module.json",
+ "download": "https://github.com/Runyth/foundry-runyth-sleep/releases/download/v1.1.2/runyth-sleep-v1.1.2-mod.zip",
+ "changelog": "CHANGELOG.md"
 }
