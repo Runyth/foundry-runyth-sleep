@@ -223,7 +223,9 @@
       "ModuleSettings": "Open module settings",
       "Automation": "Sleep automation",
       "Enabled": "Enabled",
-      "Disabled": "Disabled"
+      "Disabled": "Disabled",
+      "SelectNone": "No characters eligible for planning on this page.",
+      "SelectedCounted": "Selected {count} characters."
     },
     "Tabs": {
       "Navigation": "Dashboard navigation",

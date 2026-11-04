@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.3 — 2026-11-05
+
+- The rest-planner and rule-editor dialogs (DialogV2 windows) now carry the
+  module's themed window palette and chrome: the shared color tokens moved to
+  the window root and the planner/rules windows get the dashboard's dark
+  window-content gradiente, header and button styling.
+- Actor selection controls give explicit feedback: selecting visible rows,
+  selecting a folder and clearing now report what happened instead of staying
+  silent, including a warning when no character on the page is eligible.
 ## 1.1.2 — 2026-11-04
 
 - The installable archive now ships every relative import the manifest entry needs, so the module's buttons and settings register on world load instead of silently failing.

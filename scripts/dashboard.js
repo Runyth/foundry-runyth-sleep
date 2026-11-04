@@ -355,18 +355,33 @@ export function getDashboardClass() {
     }
 
     static selectVisible() {
-      for (const row of this._pageActors()) if (row && canPlanActor(row)) this.selected.add(row.uuid);
+      const before = this.selected.size;
+      let eligible = 0;
+      for (const row of this._pageActors()) {
+        if (row && canPlanActor(row)) { eligible += 1; this.selected.add(row.uuid); }
+      }
+      const added = this.selected.size - before;
+      if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
+      else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: added }));
       void this.render({ force: true }).catch(failure);
     }
     static selectFolder(event, button) {
       const folder = button?.dataset?.folder;
+      const before = this.selected.size;
+      let eligible = 0;
       for (const row of this._pageActors()) {
-        if ((row?.folder?.id ?? "unfiled") === folder && canPlanActor(row)) this.selected.add(row.uuid);
+        if ((row?.folder?.id ?? "unfiled") === folder && canPlanActor(row)) {
+          eligible += 1;
+          this.selected.add(row.uuid);
+        }
       }
+      if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
+      else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: this.selected.size - before }));
       void this.render({ force: true }).catch(failure);
     }
     static clearSelection() {
       this.selected.clear();
+      ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: 0 }));
       void this.render({ force: true }).catch(failure);
     }
     _pageActors() {
