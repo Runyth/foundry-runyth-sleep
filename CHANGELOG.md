@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.2.0 — 2026-11-05
+
+- Selection buttons became stateful toggles: Select visible and Select folder
+  stay highlighted (accent border, `aria-pressed`) while every selectable row
+  they cover is selected, and a click on a highlighted button empties exactly
+  that coverage; manual checkboxes and the folder buttons re-evaluate the
+  highlight immediately, so one deselected row un-highlights and
+  re-selecting restores it.
+- The selection no longer re-renders the window: Select visible, Select folder
+  and Deselect sync the rendered rows, highlights, counter and queued action
+  buttons (`_syncSelectionDom`) so the window keeps its scroll position.
+- New client setting `selectionButtonsOneShot` (per client, default off) for
+  accessibility: when enabled, the selection buttons fill once per click,
+  never toggle and show no pressed state; the selection is then cleared with
+  the Deselect button as before.
+- Fresh renders paint the pressed state (`visibleCovered`, per-folder
+  `covered`) from the selection, keeping first paint coherent with the
+  live-sync behavior.
 
 ## 1.1.4 — 2026-11-05
 

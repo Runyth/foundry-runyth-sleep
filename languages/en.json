@@ -133,7 +133,9 @@
       "UnplannedHint": "When no sleep plan exists, show a reminder after the rest, open the dashboard for the GM, or remain silent. No effects are applied without a plan.",
       "UnplannedNotice": "Remind after long rest",
       "UnplannedDashboard": "Remind and open dashboard (GM only)",
-      "UnplannedOff": "Do nothing"
+      "UnplannedOff": "Do nothing",
+      "OneShotSelectionName": "One-press selection buttons",
+      "OneShotSelectionHint": "When enabled, Select visible and Select folder fill the selection once per click and a second click does nothing; clear it with the Deselect button. When off (default), these buttons are toggles: they stay highlighted while every selectable row they cover is selected, and clicking a highlighted button empties it again."
     },
     "Chat": {
       "Title": "Sleeping conditions",
@@ -225,7 +227,8 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled",
       "SelectNone": "No characters eligible for planning on this page.",
-      "SelectedCounted": "Selected {count} characters."
+      "SelectedCounted": "Selected {count} characters.",
+      "DeselectedCounted": "Deselected {count} characters."
     },
     "Tabs": {
       "Navigation": "Dashboard navigation",

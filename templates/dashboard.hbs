@@ -65,7 +65,7 @@
         <section class="rs-selection-toolbar">
           <div><strong>{{localize "RUNYTH_SLEEP.Dashboard.Selected"}}: <span data-sleep-selected-count>{{selectedCount}}</span></strong><small>{{localize "RUNYTH_SLEEP.Dashboard.SelectHint"}}</small></div>
           <div class="rs-selection-actions">
-            <button type="button" data-action="selectVisible"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectVisible"}}</span></button>
+            <button type="button" data-action="selectVisible" class="{{#if visibleCovered}}rs-active{{/if}}" aria-pressed="{{visibleCovered}}"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectVisible"}}</span></button>
             <button type="button" data-action="clearSelection"><i class="fa-solid fa-xmark"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.Deselect"}}</span></button>
             <button type="button" data-action="bulk" data-sleep-requires-selection {{#unless selectedCanModify}}disabled{{/unless}}><i class="fa-solid fa-bed"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.QueueSelected"}}</span></button>
             <button type="button" class="danger" data-action="clear" data-sleep-requires-selection {{#unless selectedCanModify}}disabled{{/unless}}><i class="fa-solid fa-eraser"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.ClearSelected"}}</span></button>
@@ -75,7 +75,7 @@
       <section class="rs-actor-list" aria-live="polite">
         {{#each actorGroups}}
           <section class="rs-actor-group">
-            <header class="rs-actor-group-header"><div><i class="fa-solid fa-folder-open" aria-hidden="true"></i><strong>{{label}}</strong><span>{{rows.length}}</span></div>{{#if @root.showBulk}}<button type="button" class="compact" data-action="selectFolder" data-folder="{{id}}"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectFolder"}}</span></button>{{/if}}</header>
+            <header class="rs-actor-group-header"><div><i class="fa-solid fa-folder-open" aria-hidden="true"></i><strong>{{label}}</strong><span>{{rows.length}}</span></div>{{#if @root.showBulk}}<button type="button" class="compact {{#if covered}}rs-active{{/if}}" data-action="selectFolder" data-folder="{{id}}" aria-pressed="{{covered}}"><i class="fa-solid fa-check-double"></i><span>{{localize "RUNYTH_SLEEP.Dashboard.SelectFolder"}}</span></button>{{/if}}</header>
             <div class="rs-actor-group-rows">
             {{#each rows}}
               <article class="rs-actor-row rs-level-{{stateClass}} {{#if selected}}selected{{/if}}">

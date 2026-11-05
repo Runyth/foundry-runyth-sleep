@@ -170,6 +170,93 @@ test("selection buttons mark the page rows directly, without depending on the re
   for (const [uuid, input] of inputs) assert.equal(input.checked, uuid !== rows[2]);
 });
 
+test("selection buttons toggle with coverage highlights and never scroll-jump via re-render", async () => {
+  const app = new classCreated();
+  let renderCalls = 0;
+  const label = { textContent: "?" };
+  const uuidOf = actor => `Actor.${actor.id}`;
+  const rowHighlights = [];
+  const makeButton = dataset => {
+    const state = { classSet: new Set(), attrs: new Map() };
+    return {
+      dataset,
+      classList: { toggle: (cls, on) => { if (on) state.classSet.add(cls); else state.classSet.delete(cls); }, contains: cls => state.classSet.has(cls) },
+      setAttribute: (attr, value) => state.attrs.set(attr, value),
+      state
+    };
+  };
+  const visibleButton = makeButton({});
+  const woodsButton = makeButton({ folder: actors[1].folder.id });
+  const inputs = new Map();
+  for (const actor of actors) {
+    inputs.set(uuidOf(actor), {
+      dataset: { sleepSelect: uuidOf(actor) }, checked: false,
+      closest: () => ({ classList: { toggle: (cls, on) => rowHighlights.push(on ?? undefined) } })
+    });
+  }
+  const woodsInput = inputs.get(uuidOf(actors[1]));
+  woodsButton.closest = () => ({ querySelectorAll: () => [woodsInput] });
+  const inputsOf = () => [...inputs.values()];
+  app.element = {
+    querySelector: selector => selector === "[data-sleep-selected-count]" ? label
+      : selector === "button[data-action='selectVisible']" ? visibleButton : null,
+    querySelectorAll: selector => {
+      if (selector === "input[data-sleep-select]") return inputsOf();
+      if (selector === "button[data-action='selectFolder']") return [woodsButton];
+      return [];
+    }
+  };
+  app.rendered = true;
+  app.render = () => { renderCalls += 1; return Promise.resolve(app); };
+  const banners = [];
+  ui.notifications.info = message => banners.push(message);
+  ui.notifications.warn = message => banners.push(message);
+
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  assert.equal(app.selected.size, actors.length, "first press selects every selectable page row");
+  for (const input of inputsOf()) assert.ok(input.checked);
+  assert.ok(visibleButton.state.classSet.has("rs-active"), "select visible stays highlighted while covered");
+  assert.equal(visibleButton.state.attrs.get("aria-pressed"), "true");
+  assert.ok(woodsButton.state.classSet.has("rs-active"), "fully covered folder stays highlighted");
+  assert.ok(banners.some(b => b.startsWith("RUNYTH_SLEEP.Dashboard.SelectedCounted")));
+
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  assert.equal(app.selected.size, 0, "second press empties the covered rows again");
+  for (const input of inputsOf()) assert.equal(input.checked, false);
+  assert.equal(visibleButton.state.classSet.has("rs-active"), false);
+  assert.equal(visibleButton.state.attrs.get("aria-pressed"), "false");
+  assert.equal(woodsButton.state.classSet.has("rs-active"), false);
+  assert.ok(banners.some(b => b.startsWith("RUNYTH_SLEEP.Dashboard.DeselectedCounted")));
+  assert.equal(renderCalls, 0, "selection toggles never re-render, the window keeps its scroll");
+
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  app.selected.delete(uuidOf(actors[0]));
+  app._syncSelectionDom();
+  assert.equal(visibleButton.state.classSet.has("rs-active"), false, "manual deselection clears the highlight");
+  app.selected.add(uuidOf(actors[0]));
+  app._syncSelectionDom();
+  assert.ok(visibleButton.state.classSet.has("rs-active"), "manual re-selection restores the highlight");
+  assert.equal(visibleButton.state.attrs.get("aria-pressed"), "true");
+
+  classCreated.selectFolder.call(app, { preventDefault() {} }, woodsButton);
+  assert.equal(woodsInput.checked, false, "fully covered folder button empties its own group");
+  assert.equal(app.selected.size, actors.length - 1, "other rows keep their selection");
+  assert.equal(woodsButton.state.classSet.has("rs-active"), false);
+  classCreated.selectFolder.call(app, { preventDefault() {} }, woodsButton);
+  assert.ok(app.selected.has(uuidOf(actors[1])), "covered-off folder re-selects its rows");
+  assert.ok(woodsButton.state.classSet.has("rs-active"), "folder highlight restored");
+
+  settings.set("selectionButtonsOneShot", true);
+  app._syncSelectionDom();
+  assert.equal(visibleButton.state.classSet.has("rs-active"), false, "one-shot mode paints no pressed state");
+  app.selected.clear();
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  assert.equal(app.selected.size, actors.length, "one-shot press selects instead of toggling");
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  assert.equal(app.selected.size, actors.length, "one-shot second press keeps everything selected");
+  settings.delete("selectionButtonsOneShot");
+});
+
 test("corrupt saved dashboard filters fall back to safe defaults", () => {
   assert.deepEqual(sanitizeDashboardUi({ search: null, status: "magic", folder: 14, page: -50 }),
     { activeTab: "overview", search: "", status: "all", folder: "all", includeSubfolders: true, page: 1, pageSize: 40 });

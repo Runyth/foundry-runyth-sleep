@@ -113,6 +113,37 @@ export function groupDashboardRows(rows) {
 let DashboardClass;
 let dashboard;
 const actorByUuid = uuid => visibleActors().find(actor => actor.uuid === uuid) ?? null;
+const ONE_SHOT_SETTING = "selectionButtonsOneShot";
+const oneShotButtons = () => Boolean(game.settings.get(MODULE_ID, ONE_SHOT_SETTING));
+
+function selectionDom(root) {
+  const inputs = [...(root?.querySelectorAll("input[data-sleep-select]") ?? [])];
+  const groups = new Map();
+  for (const button of root?.querySelectorAll("button[data-action='selectFolder']") ?? []) {
+    const container = button.closest(".rs-actor-group");
+    if (!container) continue;
+    groups.set(container, { button, folder: button.dataset.folder, inputs: [...(container.querySelectorAll("input[data-sleep-select]") ?? [])] });
+  }
+  return { inputs, groups };
+}
+
+function groupCoverage(inputs, selected) {
+  return inputs.length > 0 && inputs.every(input => selected.has(input.dataset.sleepSelect));
+}
+
+function applySelectionToggle(app, target) {
+  if (!target.length) return ui.notifications.warn(loc("Dashboard.SelectNone"));
+  const covered = target.every(uuid => app.selected.has(uuid));
+  const deselect = !oneShotButtons() && covered;
+  for (const uuid of target) {
+    if (deselect) app.selected.delete(uuid);
+    else app.selected.add(uuid);
+  }
+  ui.notifications.info(game.i18n.format(deselect
+    ? "RUNYTH_SLEEP.Dashboard.DeselectedCounted" : "RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: target.length }));
+  return true;
+}
+
 function failure(error) {
   console.error(`${MODULE_ID} | Dashboard action failed`, error);
   ui.notifications.error(loc("Errors.OpenFailed"));
@@ -178,6 +209,12 @@ export function getDashboardClass() {
       const pageRows = filtered.slice(start, start + this.filter.pageSize).map(row => ({
         ...row, selected: this.selected.has(row.uuid)
       }));
+      const oneShot = oneShotButtons();
+      const eligibleRows = pageRows.filter(row => row.canEdit);
+      const groupsCovered = group => {
+        const eligible = group.rows.filter(row => row.canEdit);
+        return eligible.length > 0 && eligible.every(row => this.selected.has(row.uuid));
+      };
       const folders = [...new Map(candidates.filter(actor => actor.folder)
         .map(actor => [actor.folder.id, actor.folder])).values()]
         .sort((a, b) => folderPath(a).localeCompare(folderPath(b)));
@@ -208,7 +245,8 @@ export function getDashboardClass() {
         selectedCount: this.selected.size,
         selectedCanModify: this.selected.size > 0,
         previewRows: allRows.filter(row => row.hasPlan).slice(0, 8),
-        actorGroups: groupDashboardRows(pageRows), rows: pageRows,
+        actorGroups: groupDashboardRows(pageRows).map(group => ({ ...group, covered: !oneShot && groupsCovered(group) })), rows: pageRows,
+        visibleCovered: !oneShot && eligibleRows.length > 0 && eligibleRows.every(row => this.selected.has(row.uuid)),
         visible: filtered.length, page: this.filter.page, pageCount,
         rangeStart: filtered.length ? start + 1 : 0, rangeEnd: Math.min(start + this.filter.pageSize, filtered.length),
         hasPrev: this.filter.page > 1, hasNext: this.filter.page < pageCount,
@@ -271,8 +309,7 @@ export function getDashboardClass() {
         if (element?.dataset.sleepSelect) {
           if (element.checked) this.selected.add(element.dataset.sleepSelect);
           else this.selected.delete(element.dataset.sleepSelect);
-          element.closest(".rs-actor-row")?.classList.toggle("selected", element.checked);
-          this._updateSelectionLabel();
+          this._syncSelectionDom();
           return;
         }
         if (element?.dataset.sleepFilter) {
@@ -287,10 +324,23 @@ export function getDashboardClass() {
     }
 
     _syncSelectionDom() {
-      for (const input of this.element?.querySelectorAll("input[data-sleep-select]") ?? []) {
+      const dom = selectionDom(this.element);
+      for (const input of dom.inputs) {
         const checked = this.selected.has(input.dataset.sleepSelect);
         if (input.checked !== checked) input.checked = checked;
         input.closest(".rs-actor-row")?.classList.toggle("selected", checked);
+      }
+      const oneShot = oneShotButtons();
+      for (const entry of dom.groups.values()) {
+        const covered = !oneShot && groupCoverage(entry.inputs, this.selected);
+        entry.button.classList.toggle("rs-active", covered);
+        entry.button.setAttribute("aria-pressed", covered ? "true" : "false");
+      }
+      const visibleButton = this.element?.querySelector("button[data-action='selectVisible']");
+      if (visibleButton) {
+        const covered = !oneShot && groupCoverage(dom.inputs, this.selected);
+        visibleButton.classList.toggle("rs-active", covered);
+        visibleButton.setAttribute("aria-pressed", covered ? "true" : "false");
       }
       this._updateSelectionLabel();
     }
@@ -364,37 +414,26 @@ export function getDashboardClass() {
     }
 
     static selectVisible() {
-      const before = this.selected.size;
-      let eligible = 0;
-      for (const row of this._pageActors()) {
-        if (row && canPlanActor(row)) { eligible += 1; this.selected.add(row.uuid); }
-      }
-      const added = this.selected.size - before;
-      if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
-      else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: added }));
-      if (this.rendered) this._syncSelectionDom();
-      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
+      const dom = selectionDom(this.element);
+      const target = dom.inputs.map(input => input.dataset.sleepSelect);
+      if (!applySelectionToggle(this, target)) return;
+      this._syncSelectionDom();
     }
     static selectFolder(event, button) {
+      const dom = selectionDom(this.element);
       const folder = button?.dataset?.folder ?? event?.target?.closest?.("[data-action='selectFolder']")?.dataset?.folder;
-      const before = this.selected.size;
-      let eligible = 0;
-      for (const row of this._pageActors()) {
-        if ((row?.folder?.id ?? "unfiled") === folder && canPlanActor(row)) {
-          eligible += 1;
-          this.selected.add(row.uuid);
-        }
-      }
-      if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
-      else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: this.selected.size - before }));
-      if (this.rendered) this._syncSelectionDom();
-      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
+      const entry = folder === undefined ? null
+        : [...dom.groups.values()].find(candidate => candidate.folder === folder);
+      const target = entry ? entry.inputs.map(input => input.dataset.sleepSelect)
+        : this._pageActors().filter(row => row && canPlanActor(row) && ((row.folder?.id ?? "unfiled") === folder))
+          .map(row => row.uuid);
+      if (!applySelectionToggle(this, target)) return;
+      this._syncSelectionDom();
     }
     static clearSelection() {
       this.selected.clear();
       ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: 0 }));
-      if (this.rendered) this._syncSelectionDom();
-      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
+      this._syncSelectionDom();
     }
     _pageActors() {
       const filtered = dashboardRows(visibleActors(), this.filter);
