@@ -165,7 +165,7 @@ export function getDashboardClass() {
         this.filter.activeTab = "overview";
       }
       const candidates = visibleActors();
-      const validUuids = new Set(candidates.filter(canPlanActor).map(actor => actor.uuid));
+      const validUuids = new Set(candidates.filter(actor => canPlanActor(actor)).map(actor => actor.uuid));
       for (const uuid of this.selected) if (!validUuids.has(uuid)) this.selected.delete(uuid);
       const isActors = this.filter.activeTab === "actors";
       const isOverview = this.filter.activeTab === "overview";
@@ -286,6 +286,15 @@ export function getDashboardClass() {
       });
     }
 
+    _syncSelectionDom() {
+      for (const input of this.element?.querySelectorAll("input[data-sleep-select]") ?? []) {
+        const checked = this.selected.has(input.dataset.sleepSelect);
+        if (input.checked !== checked) input.checked = checked;
+        input.closest(".rs-actor-row")?.classList.toggle("selected", checked);
+      }
+      this._updateSelectionLabel();
+    }
+
     _updateSelectionLabel() {
       const label = this.element?.querySelector("[data-sleep-selected-count]");
       if (label) label.textContent = String(this.selected.size);
@@ -363,10 +372,11 @@ export function getDashboardClass() {
       const added = this.selected.size - before;
       if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
       else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: added }));
-      void this.render({ force: true }).catch(failure);
+      if (this.rendered) this._syncSelectionDom();
+      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
     }
     static selectFolder(event, button) {
-      const folder = button?.dataset?.folder;
+      const folder = button?.dataset?.folder ?? event?.target?.closest?.("[data-action='selectFolder']")?.dataset?.folder;
       const before = this.selected.size;
       let eligible = 0;
       for (const row of this._pageActors()) {
@@ -377,12 +387,14 @@ export function getDashboardClass() {
       }
       if (!eligible) ui.notifications.warn(loc("Dashboard.SelectNone"));
       else ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: this.selected.size - before }));
-      void this.render({ force: true }).catch(failure);
+      if (this.rendered) this._syncSelectionDom();
+      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
     }
     static clearSelection() {
       this.selected.clear();
       ui.notifications.info(game.i18n.format("RUNYTH_SLEEP.Dashboard.SelectedCounted", { count: 0 }));
-      void this.render({ force: true }).catch(failure);
+      if (this.rendered) this._syncSelectionDom();
+      void this.render({ force: true }).then(() => this._syncSelectionDom()).catch(failure);
     }
     _pageActors() {
       const filtered = dashboardRows(visibleActors(), this.filter);

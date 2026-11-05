@@ -39,7 +39,7 @@ beforeEach(() => {
     user: { id: "gm", isGM: true, role: 4 },
     actors: { contents: actors },
     modules: new Map([[MODULE_ID, { version: "1.0.3" }]]),
-    i18n: { lang: "en", localize: key => key },
+    i18n: { lang: "en", localize: key => key, format: (key, data) => `${key} ${JSON.stringify(data)}` },
     settings: {
       get: (namespace, key) => settings.get(key),
       set: async (namespace, key, value) => { writes.push(key); settings.set(key, value); }
@@ -122,6 +122,53 @@ test("dashboard close persists filters and window geometry per client", async ()
   assert.deepEqual(writes.sort(), ["dashboardPosition", "dashboardUi"]);
 });
 
+
+test("selection buttons mark the page rows directly, without depending on the re-render", async () => {
+  const app = new classCreated();
+  app.filter.activeTab = "actors";
+  await app._prepareContext();
+  const rows = actors.map(actor => actor.uuid);
+  const inputs = new Map(rows.map(uuid => [uuid, {
+    dataset: { sleepSelect: uuid }, checked: false,
+    closest: () => ({ classList: { toggle() {} } })
+  }]));
+  const label = { textContent: "?" };
+  const bulk = { disabled: true };
+  const selectionInputs = rows.map(uuid => inputs.get(uuid));
+  app.element = {
+    querySelector: selector => selector === "[data-sleep-selected-count]" ? label : null,
+    querySelectorAll: selector => {
+      if (selector === "input[data-sleep-select]") return selectionInputs;
+      if (selector === "[data-sleep-requires-selection]") return [bulk];
+      return [];
+    }
+  };
+  app.rendered = true;
+  let banner;
+  ui.notifications.info = message => { banner = message; };
+
+  classCreated.selectVisible.call(app, { preventDefault() {} }, null);
+  assert.ok(Number.isFinite(Number(label.textContent)), `counter updated: ${label.textContent}`);
+  assert.ok(Number(label.textContent) > 0);
+  for (const input of selectionInputs) assert.ok(input.checked, `ticked via DOM sync: ${input.dataset.sleepSelect}`);
+  assert.ok(banner, "counted banner shown");
+  assert.ok(app.selected.size > 0);
+
+  app.filter.page = 1;
+  const context = await app._prepareContext();
+  assert.ok(context.rows.every(row => row.selected), `prepare context maps the selection: ${JSON.stringify(context.rows.map(r => [r.uuid, r.selected]))} vs ${[...app.selected]}`);
+
+  classCreated.clearSelection.call(app, { preventDefault() {} }, null);
+  assert.equal(label.textContent, "0");
+  for (const input of selectionInputs) assert.equal(input.checked, false, "deselected via DOM sync");
+  assert.ok(bulk.disabled, "requires-selection buttons disable with an empty selection");
+
+  app.selected.add(rows[0]);
+  classCreated.selectFolder.call(app, { preventDefault() {}, target: { closest: () => null } },
+    { dataset: { folder: actors[1].folder.id } });
+  assert.equal(label.textContent, "2", "folder select adds its folder rows and keeps the rest");
+  for (const [uuid, input] of inputs) assert.equal(input.checked, uuid !== rows[2]);
+});
 
 test("corrupt saved dashboard filters fall back to safe defaults", () => {
   assert.deepEqual(sanitizeDashboardUi({ search: null, status: "magic", folder: 14, page: -50 }),
