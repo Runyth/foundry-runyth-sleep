@@ -240,9 +240,10 @@ export function getDashboardClass() {
       const isActors = this.filter.activeTab === "actors";
       const isOverview = this.filter.activeTab === "overview";
       const allRows = (isActors || isOverview) ? dashboardRows(candidates, { ...DEFAULT_UI, status: "all" }) : [];
-      const planned = allRows.filter(row => row.hasPlan).length;
       const searchTerm = { error: "" };
-      const filtered = isActors ? filterDashboardRows(allRows, this.filter, this.selected, searchTerm) : [];
+      const counted = filterDashboardRows(allRows, this.filter, this.selected, searchTerm);
+      const planned = counted.filter(row => row.hasPlan).length;
+      const filtered = isActors ? counted : [];
       const pageCount = Math.max(1, Math.ceil(filtered.length / this.filter.pageSize));
       this.filter.page = Math.min(pageCount, Math.max(1, this.filter.page));
       const start = (this.filter.page - 1) * this.filter.pageSize;
@@ -280,11 +281,11 @@ export function getDashboardClass() {
           .map(id => ({ id, label: loc(`Tabs.${id}`), active: id === tab })),
         overview: isOverview, actorsTab: isActors, rulesTab: tab === "rules",
         permissionsTab: tab === "permissions", settingsTab: tab === "settings",
-        total: candidates.length, planned, unplanned: candidates.length - planned,
-        recent: allRows.filter(row => row.lastAt).length,
+        total: counted.length, planned, unplanned: counted.length - planned,
+        recent: counted.filter(row => row.lastTimestamp > 0).length,
         selectedCount: this.selected.size,
         selectedCanModify: this.selected.size > 0,
-        previewRows: allRows.filter(row => row.hasPlan).slice(0, 8),
+        previewRows: counted.filter(row => row.hasPlan).slice(0, 8),
         actorGroups: groupDashboardRows(pageRows).map(group => ({ ...group, covered: !oneShot && groupsCovered(group) })), rows: pageRows,
         visibleCovered: !oneShot && eligibleRows.length > 0 && eligibleRows.every(row => this.selected.has(row.uuid)),
         visible: filtered.length, page: this.filter.page, pageCount,

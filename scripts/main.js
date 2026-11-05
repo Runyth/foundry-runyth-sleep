@@ -87,7 +87,7 @@ Hooks.once("ready", () => {
   const module = game.modules.get(MODULE_ID);
   if (!module) return;
   module.api = Object.freeze({
-    version: "1.3.0",
+    version: "1.3.1",
     sanitizeArmorRules,
     readRules,
     canModifyRules,

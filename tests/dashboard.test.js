@@ -257,6 +257,24 @@ test("selection buttons toggle with coverage highlights and never scroll-jump vi
   settings.delete("selectionButtonsOneShot");
 });
 
+test("the overview summary counts follow the Actors-tab filter set", async () => {
+  const app = new classCreated();
+  app.filter.activeTab = "overview";
+  app.filter.folder = actors[1].folder?.id ?? "all";
+  const context = await app._prepareContext();
+  const visibleIds = ["Lilith"];
+  assert.ok(context.total < actors.length, `overview total ${context.total} follows the folder filter ${app.filter.folder}`);
+  assert.equal(context.total, 1);
+  assert.ok(context.planned + context.unplanned === context.total, "planned and unplanned partition the counted set");
+  assert.ok(context.previewRows.every(row => row.uuid === "Actor.Lilith"), "preview rows follow the filter set too");
+
+  app.filter.folder = "all";
+  const broad = await app._prepareContext();
+  assert.ok(broad.total > context.total, "with no filters the overview counts the whole party");
+  assert.ok(broad.recent <= broad.total);
+  assert.ok(broad.recent >= 1, "the rest result on this page counts into the overview set");
+});
+
 test("actors tab gains the fleet-parity search filters", () => {
   const before = [{ name: "Dante", folderName: "Camp", folder: "camp", folderObject: null, uuid: "a", hasPlan: true, score: 8, lastTimestamp: 300, selected: false },
     { name: "Lilith", folderName: "Camp", folder: "camp", folderObject: null, uuid: "b", hasPlan: true, score: 3, lastTimestamp: 900, selected: false },

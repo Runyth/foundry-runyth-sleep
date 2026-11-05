@@ -243,7 +243,8 @@
       "Sort_last": "Letzte Ruhe",
       "Direction": "Richtung",
       "Ascending": "Aufsteigend",
-      "Descending": "Absteigend"
+      "Descending": "Absteigend",
+      "SummaryCountsHint": "Die Zahlen folgen den Filtern auf dem Charaktere-Reiter."
     },
     "Tabs": {
       "Navigation": "Dashboard-Navigation",
