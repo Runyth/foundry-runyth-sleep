@@ -1,5 +1,20 @@
 # Changelog
 
+
+## 1.3.0 — 2026-11-05
+
+- The Actors tab search section gains the fleet parity filters: search mode
+  with the same contains-text and regular-expression grammar, a selection
+  filter (all / selected only), a sort control (name, folder — the historical
+  default, sleep quality, last rest) and an ascending/descending direction.
+  All four persist with the other dashboard filters and clear with the reset
+  button.
+- An unparsable regular expression no longer hides rows silently: the list
+  stays empty and the toolbar surfaces the localized warning.
+- Shared filter engine updates: `filterDashboardRows` orders by the chosen
+  sort key with direction, keeps the planned-first state grouping, and the
+  rows carry the numeric rest timestamp for stable recency sorting.
+
 ## 1.2.0 — 2026-11-05
 
 - Selection buttons became stateful toggles: Select visible and Select folder

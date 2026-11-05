@@ -9,9 +9,11 @@ import { canViewActor, canPlanActor, canSeeLastResult, DEFAULT_PERMISSIONS, PERM
 
 const loc = key => game.i18n.localize(`RUNYTH_SLEEP.${key}`);
 const DEFAULT_UI = Object.freeze({
-  activeTab: "overview", search: "", status: "all", folder: "all", includeSubfolders: true,
-  page: 1, pageSize: 40
+  activeTab: "overview", search: "", searchMode: "text", status: "all", folder: "all",
+  includeSubfolders: true, selectionMode: "all", sort: "folder", direction: "asc", page: 1, pageSize: 40
 });
+const SEARCH_MODES = ["text", "regex"];
+const SORT_KEYS = ["name", "folder", "state", "last"];
 const TABS = ["overview", "actors", "rules", "permissions", "settings"];
 const PAGE_SIZES = [20, 40, 80, 120];
 const TIER_CLASS = Object.freeze({ miserable: "bad", poor: "warning", ordinary: "neutral", comfortable: "good", excellent: "excellent" });
@@ -21,9 +23,13 @@ export function sanitizeDashboardUi(saved = {}) {
   return {
     activeTab: TABS.includes(saved.activeTab) ? saved.activeTab : "overview",
     search: typeof saved.search === "string" ? saved.search.slice(0, 160) : "",
+    searchMode: SEARCH_MODES.includes(saved.searchMode) ? saved.searchMode : "text",
     status: ["all", "planned", "unplanned"].includes(saved.status) ? saved.status : "all",
     folder: typeof saved.folder === "string" && saved.folder.length <= 160 ? saved.folder : "all",
     includeSubfolders: typeof saved.includeSubfolders === "boolean" ? saved.includeSubfolders : true,
+    selectionMode: ["all", "selected"].includes(saved.selectionMode) ? saved.selectionMode : "all",
+    sort: SORT_KEYS.includes(saved.sort) ? saved.sort : "folder",
+    direction: ["asc", "desc"].includes(saved.direction) ? saved.direction : "asc",
     page: Number.isInteger(saved.page) && saved.page > 0 ? saved.page : 1,
     pageSize: PAGE_SIZES.includes(saved.pageSize) ? saved.pageSize : 40
   };
@@ -85,19 +91,52 @@ export function dashboardRows(actors, state) {
       stateClass: plan ? (quality ? TIER_CLASS[tier] : "bad") : "neutral",
       last: result?.tier && TIERS.includes(result.tier) ? loc(`Tier.${result.tier}`) : loc("Dashboard.Never"),
       lastAt: Number.isFinite(result?.appliedAt) ? new Date(result.appliedAt).toLocaleString() : "",
+      lastTimestamp: Number.isFinite(result?.appliedAt) ? result.appliedAt : 0,
       canEdit: canPlanActor(actor), selected: false
     };
   });
   return filterDashboardRows(rows, state);
 }
 
-export function filterDashboardRows(rows, state) {
-  const normalized = String(state.search ?? "").slice(0, 160).trim().toLocaleLowerCase();
-  return rows.filter(row => (!normalized || `${row.name} ${row.folderName}`.toLocaleLowerCase().includes(normalized))
-    && (state.status === "all" || (state.status === "planned" ? row.hasPlan : !row.hasPlan))
-    && descendantsOf(state.folder ?? "all", row.folderObject, state.includeSubfolders !== false)
-  ).sort((a, b) => a.folderName.localeCompare(b.folderName, game.i18n.lang || undefined) ||
-    a.name.localeCompare(b.name, game.i18n.lang || undefined));
+function compileSearch(state) {
+  const raw = String(state.search ?? "").slice(0, 160).trim();
+  if (state.searchMode === "regex") {
+    if (!raw) return { matcher: null, error: "" };
+    try {
+      return { matcher: new RegExp(raw, "iu"), error: "" };
+    } catch {
+      return { matcher: null, error: loc("Dashboard.InvalidSearch") };
+    }
+  }
+  const normalized = raw.toLocaleLowerCase();
+  return { matcher: normalized ? { test: value => value.includes(normalized) } : null, error: "" };
+}
+
+function compileSort(state) {
+  const direction = state.direction === "desc" ? -1 : 1;
+  const tieNames = (a, b) => a.name.localeCompare(b.name, game.i18n.lang || undefined) * direction;
+  const orderFns = {
+    name: tieNames,
+    folder: (a, b) => a.folderName.localeCompare(b.folderName, game.i18n.lang || undefined) * direction || tieNames(a, b),
+    state: (a, b) => (Number(b.hasPlan) - Number(a.hasPlan)) || (a.hasPlan ? ((a.score ?? 0) - (b.score ?? 0)) * direction : tieNames(a, b)),
+    last: (a, b) => (a.lastTimestamp - b.lastTimestamp) * direction || tieNames(a, b)
+  };
+  return orderFns[SORT_KEYS.includes(state.sort) ? state.sort : "folder"];
+}
+
+export function filterDashboardRows(rows, state, selected = null, diagnostics = null) {
+  const { matcher, error } = compileSearch(state);
+  if (diagnostics) diagnostics.error = error;
+  const order = compileSort(state);
+  return rows.filter(row => {
+    if (error) return false;
+    if (matcher && !matcher.test(`${row.name} ${row.folderName}`.toLocaleLowerCase())) return false;
+    if (selected && state.selectionMode === "selected" && !selected.has(row.uuid)) return false;
+    if (state.status === "all" || (state.status === "planned" ? row.hasPlan : !row.hasPlan)) {
+      return descendantsOf(state.folder ?? "all", row.folderObject, state.includeSubfolders !== false);
+    }
+    return false;
+  }).sort(order);
 }
 
 export function groupDashboardRows(rows) {
@@ -202,7 +241,8 @@ export function getDashboardClass() {
       const isOverview = this.filter.activeTab === "overview";
       const allRows = (isActors || isOverview) ? dashboardRows(candidates, { ...DEFAULT_UI, status: "all" }) : [];
       const planned = allRows.filter(row => row.hasPlan).length;
-      const filtered = isActors ? filterDashboardRows(allRows, this.filter) : [];
+      const searchTerm = { error: "" };
+      const filtered = isActors ? filterDashboardRows(allRows, this.filter, this.selected, searchTerm) : [];
       const pageCount = Math.max(1, Math.ceil(filtered.length / this.filter.pageSize));
       this.filter.page = Math.min(pageCount, Math.max(1, this.filter.page));
       const start = (this.filter.page - 1) * this.filter.pageSize;
@@ -251,7 +291,15 @@ export function getDashboardClass() {
         rangeStart: filtered.length ? start + 1 : 0, rangeEnd: Math.min(start + this.filter.pageSize, filtered.length),
         hasPrev: this.filter.page > 1, hasNext: this.filter.page < pageCount,
         showBulk: candidates.some(actor => canPlanActor(actor)),
-        search: this.filter.search, statusOptions: ["all", "planned", "unplanned"]
+        search: this.filter.search, filterError: searchTerm.error,
+        searchModeOptions: [{ id: "text", label: loc("Dashboard.SearchModeText"), selected: this.filter.searchMode === "text" },
+          { id: "regex", label: loc("Dashboard.SearchModeRegex"), selected: this.filter.searchMode === "regex" }],
+        selectionOptions: [{ id: "all", label: loc("Dashboard.SelectionAll"), selected: this.filter.selectionMode === "all" },
+          { id: "selected", label: loc("Dashboard.SelectionSelected"), selected: this.filter.selectionMode === "selected" }],
+        sortOptions: SORT_KEYS.map(id => ({ id, label: loc(`Dashboard.Sort_${id}`), selected: this.filter.sort === id })),
+        directionOptions: [{ id: "asc", label: loc("Dashboard.Ascending"), selected: this.filter.direction === "asc" },
+          { id: "desc", label: loc("Dashboard.Descending"), selected: this.filter.direction === "desc" }],
+        statusOptions: ["all", "planned", "unplanned"]
           .map(id => ({ id, label: loc(id === "all" ? "Dashboard.All" : id === "planned" ? "Dashboard.Planned" : "Dashboard.Unplanned"), selected: this.filter.status === id })),
         folderOptions: [
           { id: "all", name: loc("Dashboard.AllFolders"), selected: this.filter.folder === "all" },
@@ -314,7 +362,7 @@ export function getDashboardClass() {
         }
         if (element?.dataset.sleepFilter) {
           const field = element.dataset.sleepFilter;
-          if (!["status", "folder", "pageSize", "includeSubfolders"].includes(field)) return;
+          if (!["status", "folder", "pageSize", "includeSubfolders", "searchMode", "selectionMode", "sort", "direction"].includes(field)) return;
           this.filter[field] = field === "pageSize" ? Number(element.value)
             : field === "includeSubfolders" ? element.checked : element.value;
           this.filter.page = 1;
@@ -489,7 +537,8 @@ export function getDashboardClass() {
       } catch (error) { failure(error); }
     }
     static reset() {
-      this.filter = { ...this.filter, search: "", status: "all", folder: "all", includeSubfolders: true, page: 1 };
+      this.filter = { ...this.filter, search: "", searchMode: "text", status: "all", folder: "all",
+        includeSubfolders: true, selectionMode: "all", sort: "folder", direction: "asc", page: 1 };
       void this.render({ force: true }).catch(failure);
     }
     static previous() {
