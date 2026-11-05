@@ -172,8 +172,8 @@
       "Planned": "Plan queued",
       "Characters": "Characters",
       "AllFolders": "All folders",
-      "Summary": "Sleep overview",
-      "QuickActions": "Quick actions",
+      "Summary": "Sleep Overview",
+      "QuickActions": "Quick Actions",
       "QueueSelected": "Plan for selected",
       "ClearSelected": "Clear selected",
       "SelectFirst": "Select one or more characters first.",
@@ -206,10 +206,10 @@
       "SidebarHint": "Manage upcoming sleep conditions and long-rest consequences.",
       "Open": "Open sleep dashboard",
       "Recorded": "Rest results",
-      "SceneContext": "Current scene",
+      "SceneContext": "Current Scene",
       "SceneHint": "The Sleep Planner uses scene defaults when no plan is queued. The GM can choose and save them from the planner.",
       "OverviewHint": "Open Actors to find characters and manage queued long rests individually or in bulk.",
-      "NextRest": "Upcoming planned rests",
+      "NextRest": "Upcoming Planned Rests",
       "NoQueued": "No sleep plan queued",
       "IncludeSubfolders": "Include subfolders",
       "Filters": "Filter characters",
@@ -243,7 +243,8 @@
       "Sort_last": "Last rest",
       "Direction": "Direction",
       "Ascending": "Ascending",
-      "Descending": "Descending"
+      "Descending": "Descending",
+      "SummaryCountsHint": "Counts follow the filters that are currently set on the Actors tab."
     },
     "Tabs": {
       "Navigation": "Dashboard navigation",

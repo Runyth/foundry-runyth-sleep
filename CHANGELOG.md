@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.1 — 2026-11-05
+
+- The overview summary now counts only the character set that the Actors-tab
+  filters currently show: every card (characters, plan queued, no plan, rest
+  results) and the upcoming-rest preview follow the folder, search, status,
+  selection and subfolder filters together, page-independent — a Player folder
+  with five visible characters now counts exactly five.
+- The summary panel carries a localized hint explaining that the counts follow
+  the Actors-tab filters, mirroring the fleet presentation module.
+- Overview section titles normalized to Title Case (Sleep Overview, Current
+  Scene, Quick Actions, Upcoming Planned Rests).
 
 ## 1.3.0 — 2026-11-05
 
