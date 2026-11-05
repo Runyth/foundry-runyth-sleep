@@ -46,6 +46,10 @@ Hooks.once("init", () => {
     type: getDashboardClass(), restricted: false
   });
   setting("dashboardUi", { scope: "client", config: false, type: Object, default: { activeTab: "overview", search: "", status: "all", folder: "all", includeSubfolders: true, page: 1, pageSize: 40 } });
+  setting("selectionButtonsOneShot", {
+    name: label("OneShotSelectionName"), hint: label("OneShotSelectionHint"),
+    scope: "client", config: true, type: Boolean, default: false
+  });
   setting("dashboardPosition", { scope: "client", config: false, type: Object, default: { width: 1040, height: 740 } });
   setting("rulesJournalId", { scope: "world", config: false, type: String, default: "" });
   setting("permissions", { scope: "world", config: false, type: Object, default: DEFAULT_PERMISSIONS,
@@ -83,7 +87,7 @@ Hooks.once("ready", () => {
   const module = game.modules.get(MODULE_ID);
   if (!module) return;
   module.api = Object.freeze({
-    version: "1.1.4",
+    version: "1.2.0",
     sanitizeArmorRules,
     readRules,
     canModifyRules,

@@ -133,7 +133,9 @@
       "UnplannedHint": "Nach einer Rast ohne Schlafplanung erinnern, der Spielleitung die Übersicht öffnen oder nichts tun. Ohne Planung werden keine zusätzlichen Effekte angewendet.",
       "UnplannedNotice": "Nach langer Rast erinnern",
       "UnplannedDashboard": "Erinnern und Übersicht öffnen (nur SL)",
-      "UnplannedOff": "Nichts tun"
+      "UnplannedOff": "Nichts tun",
+      "OneShotSelectionName": "Auswahlknöpfe mit Einmal-Aktion",
+      "OneShotSelectionHint": "Wenn aktiv, füllen Sichtbare auswählen und Ordner auswählen die Auswahl pro Klick einmal und ein zweiter Klick geschieht nichts; sie wird über Auswahl aufheben geleert. Wenn aus (Standard), wirken diese Knöpfe als Umschalter: Sie bleiben hervorgehoben, solange jede auswählbare Zeile ihres Bereichs markiert ist, und leeren ihn bei erneutem Klick wieder."
     },
     "Chat": {
       "Title": "Schlafbedingungen",
@@ -225,7 +227,8 @@
       "Enabled": "Aktiv",
       "Disabled": "Deaktiviert",
       "SelectNone": "Keine Charaktere zum Planen auf dieser Seite.",
-      "SelectedCounted": "{count} Charaktere ausgewählt."
+      "SelectedCounted": "{count} Charaktere ausgewählt.",
+      "DeselectedCounted": "{count} Charaktere abgewählt."
     },
     "Tabs": {
       "Navigation": "Dashboard-Navigation",

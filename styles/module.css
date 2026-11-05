@@ -716,6 +716,15 @@
 .rs-panel p { overflow-wrap: anywhere; }
 .rs-panel .rs-link-button { vertical-align: baseline; }
 .rs-selection-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .35rem; }
+.rs-selection-actions button.rs-active,
+.rs-actor-group-header .compact.rs-active {
+  border-color: var(--rs-accent);
+  background: var(--rs-panel);
+  color: var(--rs-accent-strong);
+  box-shadow: inset 0 0 0 1px var(--rs-accent);
+}
+.rs-selection-actions button.rs-active:focus-visible,
+.rs-actor-group-header .compact.rs-active:focus-visible { outline: 2px solid var(--rs-accent-strong); outline-offset: 1px; }
 .rs-pagination-buttons { display: flex; align-items: center; gap: .45rem; }
 .rs-actor-pagination > label { flex-direction: row; align-items: center; }
 .rs-actor-pagination select { width: auto; }
