@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Daniel Braniewski. See the LICENSE file for rights and obligations.
 import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { dashboardRows, getDashboardClass, groupDashboardRows, openDashboard, sanitizeDashboardUi } from "../scripts/dashboard.js";
+import { dashboardRows, filterDashboardRows, getDashboardClass, groupDashboardRows, openDashboard, sanitizeDashboardUi } from "../scripts/dashboard.js";
 import { DEFAULT_CHOICES, DEFAULT_OUTCOMES, DEFAULT_THRESHOLDS, MODULE_ID } from "../scripts/domain.js";
 import { resetGeometryCache } from "../scripts/geometry.js";
 
@@ -257,8 +257,37 @@ test("selection buttons toggle with coverage highlights and never scroll-jump vi
   settings.delete("selectionButtonsOneShot");
 });
 
+test("actors tab gains the fleet-parity search filters", () => {
+  const before = [{ name: "Dante", folderName: "Camp", folder: "camp", folderObject: null, uuid: "a", hasPlan: true, score: 8, lastTimestamp: 300, selected: false },
+    { name: "Lilith", folderName: "Camp", folder: "camp", folderObject: null, uuid: "b", hasPlan: true, score: 3, lastTimestamp: 900, selected: false },
+    { name: "lilim", folderName: "Ruins", folder: "ruins", folderObject: null, uuid: "c", hasPlan: false, score: null, lastTimestamp: 0, selected: false }];
+  game.i18n.localize = key => key.split(".").at(-1);
+
+  assert.deepEqual(filterDashboardRows(before, { search: "^lilim", searchMode: "regex" }).map(r => r.uuid), ["c"]);
+  const diagnostics = {};
+  assert.deepEqual(filterDashboardRows(before, { search: "(lilim", searchMode: "regex" }, null, diagnostics).map(r => r.uuid), []);
+  assert.ok(diagnostics.error.length > 0, "invalid regex exposes the parse error");
+
+  const selected = new Set(["a"]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", selectionMode: "selected" }, selected).map(r => r.uuid), ["a"]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", selectionMode: "all" }, selected).length, 3);
+
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", sort: "state" }).map(r => r.hasPlan), [true, true, false]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", sort: "state", direction: "desc" }).map(r => r.score), [8, 3, null]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", sort: "last", direction: "desc" }).map(r => r.lastTimestamp), [900, 300, 0]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", sort: "name", direction: "asc" }).map(r => r.name), ["Dante", "lilim", "Lilith"]);
+  assert.deepEqual(filterDashboardRows(before, { status: "all", search: "", searchMode: "text", sort: "name", direction: "desc" }).map(r => r.name), ["Lilith", "lilim", "Dante"]);
+
+  assert.equal(sanitizeDashboardUi({ searchMode: "joiled", selectionMode: "sometimes", sort: "chaos", direction: "sideways" }).searchMode, "text");
+  assert.equal(sanitizeDashboardUi({}).sort, "folder", "default sort keeps the historical folder-first order");
+  game.i18n.localize = key => key;
+});
+
 test("corrupt saved dashboard filters fall back to safe defaults", () => {
   assert.deepEqual(sanitizeDashboardUi({ search: null, status: "magic", folder: 14, page: -50 }),
-    { activeTab: "overview", search: "", status: "all", folder: "all", includeSubfolders: true, page: 1, pageSize: 40 });
+    { activeTab: "overview", search: "", searchMode: "text", status: "all", folder: "all",
+      includeSubfolders: true, selectionMode: "all", sort: "folder", direction: "asc", page: 1, pageSize: 40 });
   assert.equal(sanitizeDashboardUi({ search: "x".repeat(300) }).search.length, 160);
+  assert.deepEqual(filterDashboardRows([{ name: "Dante", folderName: "", folderObject: null, uuid: "a", hasPlan: false, lastTimestamp: 0, selected: false }],
+    { search: "", folder: "all" }).length, 1);
 });

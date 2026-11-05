@@ -228,7 +228,22 @@
       "Disabled": "Deaktiviert",
       "SelectNone": "Keine Charaktere zum Planen auf dieser Seite.",
       "SelectedCounted": "{count} Charaktere ausgewählt.",
-      "DeselectedCounted": "{count} Charaktere abgewählt."
+      "DeselectedCounted": "{count} Charaktere abgewählt.",
+      "SearchMode": "Suchmodus",
+      "SearchModeText": "Enthält Text",
+      "SearchModeRegex": "Regulärer Ausdruck",
+      "InvalidSearch": "Der reguläre Ausdruck konnte nicht gelesen werden, deshalb werden keine Charaktere angezeigt.",
+      "SelectionFilter": "Auswahl",
+      "SelectionAll": "Alle Charaktere",
+      "SelectionSelected": "Nur ausgewählte",
+      "Sort": "Sortieren nach",
+      "Sort_name": "Name",
+      "Sort_folder": "Ordner",
+      "Sort_state": "Schlafqualität",
+      "Sort_last": "Letzte Ruhe",
+      "Direction": "Richtung",
+      "Ascending": "Aufsteigend",
+      "Descending": "Absteigend"
     },
     "Tabs": {
       "Navigation": "Dashboard-Navigation",

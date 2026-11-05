@@ -228,7 +228,22 @@
       "Disabled": "Disabled",
       "SelectNone": "No characters eligible for planning on this page.",
       "SelectedCounted": "Selected {count} characters.",
-      "DeselectedCounted": "Deselected {count} characters."
+      "DeselectedCounted": "Deselected {count} characters.",
+      "SearchMode": "Search mode",
+      "SearchModeText": "Contains text",
+      "SearchModeRegex": "Regular expression",
+      "InvalidSearch": "The regular expression could not be parsed, so no characters are shown.",
+      "SelectionFilter": "Selection",
+      "SelectionAll": "All characters",
+      "SelectionSelected": "Selected only",
+      "Sort": "Sort by",
+      "Sort_name": "Name",
+      "Sort_folder": "Folder",
+      "Sort_state": "Sleep quality",
+      "Sort_last": "Last rest",
+      "Direction": "Direction",
+      "Ascending": "Ascending",
+      "Descending": "Descending"
     },
     "Tabs": {
       "Navigation": "Dashboard navigation",
