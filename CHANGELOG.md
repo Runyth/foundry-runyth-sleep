@@ -1,5 +1,23 @@
 # Changelog
 
+
+## 1.1.4 — 2026-11-05
+
+- Fix the dashboard selection prune so Select visible / Select folder selections
+  survive the next render: `_prepareContext` rebuilt its valid-selection set with
+  a direct `candidates.filter(canPlanActor)`, where `Array.filter` hands the row
+  INDEX in as the `user` argument; on that masked failure mode GM bindings were
+  checked against role minimums of an integer and every selected uuid was
+  deleted straight after the counted banner, leaving the page boxes unticked
+  (index-passed callback trap; the loop-based `selectVisible` gate ran with the
+  real user, so the selection was added but then pruned).
+- Select visible / Select folder / Deselect now sync the rendered page directly
+  (`_syncSelectionDom`): inputs, row highlight and the selection counter plus
+  the requires-selection buttons update without depending on a re-render, and
+  the post-render sync re-applies the selection state after the rebuild.
+- `selectFolder` now falls back to resolving the folder from the click target
+  when the action call does not pass the button payload.
+
 ## 1.1.3 — 2026-11-05
 
 - The rest-planner and rule-editor dialogs (DialogV2 windows) now carry the
