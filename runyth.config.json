@@ -1,0 +1,79 @@
+{
+  "build": {
+    "exclude": [
+      "**/*.map",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/.DS_Store",
+      "**/Thumbs.db"
+    ],
+    "include": [
+      "module.json",
+      "README.md",
+      "CHANGELOG.md",
+      "LICENSE",
+      "scripts/**",
+      "styles/**",
+      "templates/**",
+      "lang/**",
+      "packs/**",
+      "assets/**",
+      "data/**",
+      "fonts/**",
+      "icons/**",
+      "media/**",
+      "sounds/**",
+      "ui/**",
+      "vendor/**",
+      "languages/**"
+    ],
+    "preBuild": [],
+    "sourceExclude": [
+      ".git/**",
+      ".runyth-template-source/**",
+      "dist/**",
+      "node_modules/**",
+      "coverage/**",
+      ".nyc_output/**",
+      ".cache/**",
+      "*.log",
+      ".env",
+      ".env.*",
+      "**/.DS_Store",
+      "**/Thumbs.db"
+    ]
+  },
+  "module": {
+    "kind": "runtime",
+    "publicApi": true,
+    "repository": "Runyth/foundry-runyth-sleep",
+    "systemNeutral": false
+  },
+  "runtimeKit": {
+    "managed": false
+  },
+  "schemaVersion": 1,
+  "sync": {
+    "exclude": []
+  },
+  "template": {
+    "repository": "Runyth/template-foundry-module",
+    "source": false,
+    "version": "1.1.5"
+  },
+  "validation": {
+    "allowFindings": [
+      {
+        "path": "scripts/planner.js",
+        "reason": "Audited: the local html() helper escapes &<>\"' and values come from internal option constants plus localized labels.",
+        "rule": "unsafe-inner-html"
+      }
+    ],
+    "forbidPrivateFoundryApis": true,
+    "forbidSourceMaps": true,
+    "requireLocaleParity": false,
+    "requireRepositoryUrls": true,
+    "requireVersionParity": true,
+    "requiredLocales": []
+  }
+}

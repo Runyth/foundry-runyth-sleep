@@ -1,8 +1,8 @@
 # Runyth Sleep
 
 **Version:** 1.1.0
-**Platform:** Foundry VTT v13 · D&D 5e system 5.x–6.x (v13-dependent)  
-**Languages:** English and German · English source/default  
+**Platform:** Foundry VTT v13 · D&D 5e system 5.x–6.x (v13-dependent)
+**Languages:** English and German · English source/default
 **License:** GNU AGPL-3.0-or-later
 
 Runyth Sleep adds grounded, GM-approved **sleeping conditions** to a character's **next completed long rest**. The system handles its ordinary long-rest recovery first; Runyth Sleep then awards or penalizes the quality of the sleep. All consequences are house rules, not official D&D rules.
